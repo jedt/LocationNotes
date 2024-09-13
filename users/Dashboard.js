@@ -1,6 +1,16 @@
 import LoginDashboard from './LoginDashboard';
 import {useSelector, useDispatch} from 'react-redux';
 import {readUser} from '../features/apps/appSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useEffect} from 'react';
+import Welcome from '../Welcome';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
+
+const Stack = createNativeStackNavigator();
 import {
   StyleSheet,
   Text,
@@ -10,12 +20,19 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useEffect} from 'react';
+
+import NotesTabs from '../notes/NotesTabs';
+// import NotesView from '../notes/NotesView';
+// import NotesDetail from '../notes/NotesDetail';
+// import NotesMap from '../notes/NotesMap';
 
 export default function Dashboard() {
   const loggedInUser = useSelector(state => state.app.loggedInUser);
+  const currentScreen = useSelector(state => state.notes.currentScreen);
   const {status, error} = useSelector(state => state.app);
+  const hasUserClosedWelcome = useSelector(
+    state => state.app.hasUserClosedWelcome,
+  );
   const dispatch = useDispatch();
 
   //readUser
@@ -37,11 +54,11 @@ export default function Dashboard() {
   }
 
   if (loggedInUser) {
-    return (
-      <View style={styles.container}>
-        <Text>Welcome {loggedInUser.email}</Text>
-      </View>
-    );
+    if (hasUserClosedWelcome) {
+      console.log('[Dashboard] currentScreen', currentScreen);
+      return <NotesTabs />;
+    }
+    return <Welcome />;
   }
 
   return <LoginDashboard />;

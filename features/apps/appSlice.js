@@ -53,9 +53,7 @@ export const readUser = createAsyncThunk(
   'app/readUser',
   async (_, {rejectWithValue}) => {
     try {
-      console.log('[appSlice] readUser');
       const value = await AsyncStorage.getItem('user');
-      console.log('[appSlice] readUser value:', value);
       if (value) {
         const user = JSON.parse(value);
         return user;
@@ -75,6 +73,7 @@ const appSlice = createSlice({
     status: 'idle',
     error: null,
     loggedInUser: null,
+    hasUserClosedWelcome: false,
   },
   reducers: {
     setScreen(state, action) {
@@ -82,6 +81,9 @@ const appSlice = createSlice({
     },
     setLoggedInUser(state, action) {
       state.loggedInUser = action.payload;
+    },
+    setHasUserClosedWelcome(state, action) {
+      state.hasUserClosedWelcome = action.payload;
     },
   },
   extraReducers: builder => {
@@ -129,5 +131,6 @@ const appSlice = createSlice({
   },
 });
 
-export const {setScreen, setLoggedInUser} = appSlice.actions;
+export const {setScreen, setLoggedInUser, setHasUserClosedWelcome} =
+  appSlice.actions;
 export default appSlice.reducer;
