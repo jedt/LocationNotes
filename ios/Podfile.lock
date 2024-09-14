@@ -2426,6 +2426,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-geolocation (3.4.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-maps (1.18.0):
+    - React-Core
   - react-native-safe-area-context (4.11.0):
     - React-Core
   - React-nativeconfig (0.75.2)
@@ -2777,6 +2800,8 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -2912,6 +2937,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-nativeconfig:
@@ -3040,6 +3069,8 @@ SPEC CHECKSUMS:
   React-logger: 8db32983d75dc2ad54f278f344ccb9b256e694fc
   React-Mapbuffer: db173bede5ac5cb1c82d4a6a8597477ba87c5648
   React-microtasksnativemodule: 0c1d7b6f26fbeae097279569cf2430255fa3d3a9
+  react-native-geolocation: cc79f2a7a8c6616db25b9728670bbb2011ded918
+  react-native-maps: 2e6e9896195781327ee15b33e3e84bf73c08207a
   react-native-safe-area-context: 851c62c48dce80ccaa5637b6aa5991a1bc36eca9
   React-nativeconfig: 5fc2b05a590eb704128f5a4fc8ea6fa7b847e6e8
   React-NativeModulesApple: 88313414ddffd1758f76042733e8f0297acfd502

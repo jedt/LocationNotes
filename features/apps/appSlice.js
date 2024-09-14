@@ -47,6 +47,16 @@ export const login = createAsyncThunk(
   },
 );
 
+// Async thunk for logout
+export const logout = createAsyncThunk('app/logout', async () => {
+  try {
+    await auth().signOut();
+    return null;
+  } catch (error) {
+    return error.message;
+  }
+});
+
 // async thunk for reading user from async storage
 //const value = await AsyncStorage.getItem('my-key');
 export const readUser = createAsyncThunk(
@@ -126,6 +136,16 @@ const appSlice = createSlice({
       })
       .addCase(readUser.fulfilled, (state, action) => {
         state.loggedInUser = action.payload;
+        state.status = 'succeeded';
+      })
+      .addCase(logout.pending, state => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(logout.fulfilled, state => {
+        state.hasUserClosedWelcome = false;
+        state.currentScreen = 'Login';
+        state.loggedInUser = null;
         state.status = 'succeeded';
       });
   },

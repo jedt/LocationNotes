@@ -1,12 +1,20 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 export const fetchNotes = createAsyncThunk(
   'notes/fetchNotes',
   async (_, thunkAPI) => {
     try {
+      console.log(`[${Date()} notesSlice] fetchNotes`);
       const notes = [];
+      const startTime = Date.now();
       const querySnapshot = await firestore().collection('notes').get();
+      console.log(
+        `[${Date()} notesSlice] fetchNotes took`,
+        Date.now() - startTime,
+        'ms',
+      );
       querySnapshot.forEach(documentSnapshot => {
         notes.push({id: documentSnapshot.id, ...documentSnapshot.data()});
       });
@@ -19,12 +27,11 @@ export const fetchNotes = createAsyncThunk(
 
 export const addNote = createAsyncThunk(
   'notes/addNote',
-  async (noteData, thunkAPI) => {
+  async ({noteData}, thunkAPI) => {
     try {
-      const docRef = await firestore().collection('notes').add(noteData);
-      const doc = await docRef.get();
-      return {id: doc.id, ...doc.data()};
+      return await firestore().collection('notes').add(noteData);
     } catch (error) {
+      console.log('addNote error', error);
       return thunkAPI.rejectWithValue(error.message);
     }
   },
@@ -34,8 +41,7 @@ export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({id, noteData}, thunkAPI) => {
     try {
-      await firestore().collection('notes').doc(id).update(noteData);
-      return {id, ...noteData};
+      return await firestore().collection('notes').doc(id).update(noteData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -44,11 +50,12 @@ export const updateNote = createAsyncThunk(
 
 export const deleteNote = createAsyncThunk(
   'notes/deleteNote',
-  async (id, thunkAPI) => {
+  async ({id}, thunkAPI) => {
     try {
-      await firestore().collection('notes').doc(id).delete();
+      const returnObj = await firestore().collection('notes').doc(id).delete();
       return id;
     } catch (error) {
+      console.log('deleteNote error', error);
       return thunkAPI.rejectWithValue(error.message);
     }
   },
@@ -81,10 +88,18 @@ const notesSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(addNote.pending, state => {
+        state.loading = true;
+      })
       .addCase(addNote.fulfilled, (state, action) => {
+        state.loading = false;
         state.notes.push(action.payload);
       })
+      .addCase(updateNote.pending, state => {
+        state.loading = true;
+      })
       .addCase(updateNote.fulfilled, (state, action) => {
+        state.loading = false;
         const index = state.notes.findIndex(
           note => note.id === action.payload.id,
         );
@@ -92,7 +107,11 @@ const notesSlice = createSlice({
           state.notes[index] = action.payload;
         }
       })
+      .addCase(deleteNote.pending, state => {
+        state.loading = true;
+      })
       .addCase(deleteNote.fulfilled, (state, action) => {
+        state.loading = false;
         state.notes = state.notes.filter(note => note.id !== action.payload);
       });
   },
