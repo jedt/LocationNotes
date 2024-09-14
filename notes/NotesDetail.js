@@ -16,15 +16,20 @@ import {
   addNote,
   updateNote,
   deleteNote,
-  setNote,
+  setNoteDateValue,
 } from '../features/notes/notesSlice';
 import firestore from '@react-native-firebase/firestore';
 import Geolocation from '@react-native-community/geolocation';
 
 export default function NotesDetail({route, navigation}) {
-  const {noteId} = route.params || {};
-  const {note} = useSelector(state => state.notes);
+  const {noteId, item} = route.params || {};
+  const {noteDateValue} = useSelector(state => state.notes);
+  const [note, setNote] = useState(item || {});
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setNoteDateValue(item.date));
+  }, [noteId, item]);
 
   useEffect(() => {
     if (noteId) {
@@ -34,27 +39,28 @@ export default function NotesDetail({route, navigation}) {
         .onSnapshot(documentSnapshot => {
           const data = documentSnapshot.data();
           if (data) {
-            dispatch(
-              setNote({...note, ...data, location: data.location || null}),
-            );
+            setNote({
+              ...data,
+              ...note,
+              date: noteDateValue,
+              location: data.location || null,
+            });
           }
         });
       return () => unsubscribe();
     } else {
-      dispatch(
-        setNote({
-          title: '',
-          body: '',
-          date: new Date().toLocaleDateString(),
-          location: null,
-        }),
-      );
+      setNote({
+        title: '',
+        body: '',
+        date: noteDateValue || new Date().toLocaleDateString(),
+        location: null,
+      });
     }
-  }, [dispatch, noteId]);
+  }, [noteId]);
 
   useEffect(() => {
     requestLocationPermission();
-  }, []);
+  }, [noteId, noteDateValue]);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -86,7 +92,7 @@ export default function NotesDetail({route, navigation}) {
   const getLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        dispatch(setNote({...note, location: position.coords}));
+        setNote({...note, date: noteDateValue, location: position.coords});
       },
       error => {
         console.log(error);
@@ -129,13 +135,13 @@ export default function NotesDetail({route, navigation}) {
         style={styles.input}
         placeholder="Title"
         value={note.title}
-        onChangeText={text => dispatch(setNote({...note, title: text}))}
+        onChangeText={text => setNote({...note, title: text})}
       />
       <TextInput
         style={[styles.input, {height: 100}]}
         placeholder="Body"
         value={note.body}
-        onChangeText={text => dispatch(setNote({...note, body: text}))}
+        onChangeText={text => setNote({...note, body: text})}
         multiline
       />
       <Button title="Save" onPress={handleSave} />

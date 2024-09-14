@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Async thunk for user signup
 export const signUp = createAsyncThunk(
-  'app/signup',
+  'app/signUp',
   async ({email, password}, {rejectWithValue}) => {
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(
@@ -12,10 +12,7 @@ export const signUp = createAsyncThunk(
         password,
       );
 
-      console.log('[signUp] userCredential:', userCredential);
-
       if (userCredential && userCredential.user) {
-        console.log('[signUp] User signed up:', userCredential.user);
         return {user: userCredential.user};
       }
 
@@ -50,6 +47,7 @@ export const login = createAsyncThunk(
 // Async thunk for logout
 export const logout = createAsyncThunk('app/logout', async () => {
   try {
+    await AsyncStorage.removeItem('user');
     await auth().signOut();
     return null;
   } catch (error) {
@@ -78,7 +76,6 @@ export const readUser = createAsyncThunk(
 const appSlice = createSlice({
   name: 'app',
   initialState: {
-    currentScreen: 'Login',
     user: null,
     status: 'idle',
     error: null,
@@ -86,9 +83,6 @@ const appSlice = createSlice({
     hasUserClosedWelcome: false,
   },
   reducers: {
-    setScreen(state, action) {
-      state.currentScreen = action.payload;
-    },
     setLoggedInUser(state, action) {
       state.loggedInUser = action.payload;
     },
@@ -103,8 +97,6 @@ const appSlice = createSlice({
         state.error = null;
       })
       .addCase(signUp.fulfilled, (state, action) => {
-        console.log('[extraReducers] User signed up:', action);
-        //action =  {"meta": {"arg": {"email": "test1@example.com", "password": "1234"}, "requestId": "3RahPSBHkLtszW2hhr978", "requestStatus": "fulfilled"}, "payload": undefined, "type": "app/signup/fulfilled"}
         if (action.payload && action.payload.user) {
           state.user = action.payload.user;
           state.status = 'succeeded';
@@ -148,7 +140,6 @@ const appSlice = createSlice({
       })
       .addCase(logout.fulfilled, state => {
         state.hasUserClosedWelcome = false;
-        state.currentScreen = 'Login';
         state.loggedInUser = null;
         state.status = 'succeeded';
       });

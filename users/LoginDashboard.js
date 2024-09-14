@@ -7,10 +7,9 @@ import Login from './Login';
 import Signup from './Signup';
 
 export default function LoginDashboard() {
-  const currentScreen = useSelector(state => state.app.currentScreen);
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={currentScreen}>
+      <Stack.Navigator initialRouteName={'Login'}>
         <Stack.Screen
           name="Login"
           component={Login}

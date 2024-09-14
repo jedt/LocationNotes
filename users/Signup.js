@@ -13,8 +13,8 @@ import {useDispatch, useSelector, connect} from 'react-redux';
 import {signUp} from '../features/apps/appSlice';
 
 export default function Signup({navigation, route}) {
-  const [email, setEmail] = useState('test1@example.com');
-  const [password, setPassword] = useState('$jkAY1vUjjVmz9W');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const dispatch = useDispatch();
 
   const {status, error} = useSelector(state => state.app);
@@ -23,6 +23,7 @@ export default function Signup({navigation, route}) {
     try {
       await dispatch(signUp({email, password})).unwrap();
       navigation.navigate('Login');
+      Alert.alert('Signup Success', "You've successfully signed up!");
     } catch (err) {
       Alert.alert('Signup Error', err);
     }
@@ -52,7 +53,7 @@ export default function Signup({navigation, route}) {
         />
       </View>
       <Button title="Signup" onPress={onSignup} />
-      <Button title="Go Back" onPress={() => navigation.popToTop()} />
+      <Button title="Go Back" onPress={() => navigation.goBack()} />
     </View>
   );
 }

@@ -15,12 +15,11 @@ import {
 
 export default function Login({navigation}) {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('test1@example.com');
-  const [password, setPassword] = useState('$jkAY1vUjjVmz9W');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const {status, error} = useSelector(state => state.app);
 
   const handleSignup = () => {
-    dispatch(setScreen('Signup'));
     navigation.navigate('Signup');
   };
 

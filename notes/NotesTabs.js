@@ -1,16 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  Button,
-  Image,
-  RefreshControl,
-} from 'react-native';
 import {useDispatch, useSelector, connect} from 'react-redux';
 import {fetchNotes} from '../features/notes/notesSlice';
 import {NavigationContainer, useFocusEffect} from '@react-navigation/native';
@@ -20,6 +8,35 @@ import {logout} from '../features/apps/appSlice';
 import NotesMap from './NotesMap';
 import NotesDetail from './NotesDetail';
 import NotesDetailChangeDate from './NotesDetailChangeDate';
+import {FloatingAction} from 'react-native-floating-action';
+
+import {
+  Alert,
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  Button,
+  Image,
+  RefreshControl,
+} from 'react-native';
+
+const deviceHeight = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
+const cardHeight = deviceWidth / 1.6 - 28;
+
+const actions = [
+  {
+    text: 'New Note',
+    icon: require('../images/add.png'),
+    name: 'NewNote',
+    position: 0,
+  },
+];
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -35,19 +52,18 @@ function NotesListComponent({navigation}) {
     dispatch(fetchNotes());
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button onPress={() => navigation.push('NotesDetail')} title="Add" />
-      ),
-    });
-  }, [navigation]);
-
   const renderItem = ({item}) => (
     <TouchableOpacity
-      onPress={() => navigation.push('NotesDetail', {noteId: item.id})}>
-      <Text style={styles.noteTitle}>{item.title}</Text>
-      <Text style={styles.noteDate}>{item.date}</Text>
+      onPress={() =>
+        navigation.push('NotesDetail', {noteId: item.id, item: item})
+      }>
+      <View style={styles.noteItem}>
+        <Text style={styles.noteTitle}>{item.title}</Text>
+        <Text style={styles.noteDate}>{item.date}</Text>
+        <View style={styles.body}>
+          <Text>{item.body}</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 
@@ -75,14 +91,17 @@ function NotesListComponent({navigation}) {
     );
   }
 
-  console.log('notes', notes);
-
   return (
     <View style={styles.container}>
       <FlatList
         data={notes}
         renderItem={renderItem}
-        keyExtractor={item => item && item.id}
+        keyExtractor={item => {
+          if (item.id) {
+            return item.id;
+          }
+          return Math.random().toString();
+        }}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
@@ -91,41 +110,74 @@ function NotesListComponent({navigation}) {
   );
 }
 
-function Notes() {
+function Notes({navigation}) {
   const currentScreen = useSelector(state => state.notes.currentScreen);
+  const dispatch = useDispatch();
   return (
-    <Stack.Navigator initialRouteName={currentScreen}>
-      <Stack.Screen
-        name="NotesList"
-        component={NotesListComponent}
-        options={{title: 'Notes List'}}
-      />
+    <>
+      <Stack.Navigator initialRouteName={currentScreen}>
+        <Stack.Screen
+          name="NotesList"
+          component={NotesListComponent}
+          options={{title: 'Notes List'}}
+        />
 
-      <Stack.Screen name="NotesDetail" component={NotesDetail} />
-      <Stack.Screen
-        name="NotesDetailChangeDate"
-        component={NotesDetailChangeDate}
+        <Stack.Screen name="NotesDetail" component={NotesDetail} />
+        <Stack.Screen
+          name="NotesDetailChangeDate"
+          component={NotesDetailChangeDate}
+        />
+      </Stack.Navigator>
+      <FloatingAction
+        distanceToEdge={{vertical: 20, horizontal: 10}}
+        actions={actions}
+        onPressItem={() => {
+          navigation.navigate('NotesDetail', {
+            item: {
+              title: '',
+              body: '',
+              date: new Date().toLocaleDateString(),
+              location: null,
+            },
+          });
+        }}
       />
-    </Stack.Navigator>
+    </>
   );
 }
 
-function Map() {
+function Map({navigation}) {
   const currentScreen = useSelector(state => state.notes.currentScreen);
   return (
-    <Stack.Navigator initialRouteName={currentScreen}>
-      <Stack.Screen
-        name="NotesMap"
-        component={NotesMap}
-        options={{title: 'Notes Map'}}
-      />
+    <>
+      <Stack.Navigator initialRouteName={currentScreen}>
+        <Stack.Screen
+          name="NotesMap"
+          component={NotesMap}
+          options={{title: 'Notes Map'}}
+        />
 
-      <Stack.Screen name="NotesDetail" component={NotesDetail} />
-      <Stack.Screen
-        name="NotesDetailChangeDate"
-        component={NotesDetailChangeDate}
+        <Stack.Screen name="NotesDetail" component={NotesDetail} />
+        <Stack.Screen
+          name="NotesDetailChangeDate"
+          component={NotesDetailChangeDate}
+        />
+      </Stack.Navigator>
+      <FloatingAction
+        distanceToEdge={{vertical: 50, horizontal: 10}}
+        actions={actions}
+        onPressItem={() => {
+          navigation.navigate('NotesDetail', {
+            item: {
+              title: '',
+              body: '',
+              date: new Date().toLocaleDateString(),
+              location: null,
+            },
+          });
+        }}
       />
-    </Stack.Navigator>
+    </>
   );
 }
 
@@ -191,7 +243,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
   },
+  body: {
+    marginTop: 10,
+  },
+  listStyle: {},
   noteItem: {
+    marginBottom: 4,
+    backgroundColor: '#FFFFFF',
+    width: deviceWidth,
+    height: cardHeight,
+    borderWidth: 1,
+    borderColor: '#EAEAEA',
+    alignSelf: 'stretch',
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',

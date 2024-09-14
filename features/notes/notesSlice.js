@@ -70,19 +70,15 @@ const notesSlice = createSlice({
     notes: [],
     loading: false,
     error: null,
-    note: {
-      title: '',
-      body: '',
-      date: new Date().toLocaleDateString(),
-      location: null,
-    },
+    noteDateValue: new Date().toLocaleDateString(),
   },
   reducers: {
     setScreen(state, action) {
       state.currentScreen = action.payload;
     },
-    setNote(state, action) {
-      state.note = action.payload;
+    setNoteDateValue(state, action) {
+      console.log('[notesSlice] setNoteDateValue', action.payload);
+      state.noteDateValue = action.payload;
     },
   },
   extraReducers: builder => {
@@ -129,5 +125,5 @@ const notesSlice = createSlice({
   },
 });
 
-export const {setScreen, setNote} = notesSlice.actions;
+export const {setScreen, setNote, setNoteDateValue} = notesSlice.actions;
 export default notesSlice.reducer;

@@ -28,7 +28,6 @@ import NotesTabs from '../notes/NotesTabs';
 
 export default function Dashboard() {
   const loggedInUser = useSelector(state => state.app.loggedInUser);
-  const currentScreen = useSelector(state => state.notes.currentScreen);
   const {status, error} = useSelector(state => state.app);
   const hasUserClosedWelcome = useSelector(
     state => state.app.hasUserClosedWelcome,
@@ -54,7 +53,6 @@ export default function Dashboard() {
 
   if (loggedInUser) {
     if (hasUserClosedWelcome) {
-      console.log('[Dashboard] currentScreen', currentScreen);
       return <NotesTabs />;
     }
     return <Welcome />;
