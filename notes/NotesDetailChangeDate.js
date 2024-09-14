@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Button} from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch, useSelector} from 'react-redux';
@@ -8,15 +8,11 @@ export default function NotesDetailChangeDate({navigation, route}) {
   const dispatch = useDispatch();
   const {note} = useSelector(state => state.notes);
   const [selectedDate, setSelectedDate] = useState(new Date());
+
   const onDateChange = date => {
     setSelectedDate(date);
-    dispatch(
-      setNote({
-        ...note,
-        date: date.toLocaleDateString(),
-      }),
-    );
   };
+
   return (
     <View style={styles.container}>
       <View>
@@ -29,7 +25,15 @@ export default function NotesDetailChangeDate({navigation, route}) {
       <Button
         style={{height: 50}}
         title="Save"
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          dispatch(
+            setNote({
+              ...note,
+              date: selectedDate.toLocaleDateString(),
+            }),
+          );
+          navigation.goBack();
+        }}
       />
     </View>
   );

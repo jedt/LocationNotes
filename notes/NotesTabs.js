@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Button,
+  Image,
+  RefreshControl,
 } from 'react-native';
 import {useDispatch, useSelector, connect} from 'react-redux';
 import {fetchNotes} from '../features/notes/notesSlice';
@@ -25,11 +27,13 @@ function NotesListComponent({navigation}) {
   const dispatch = useDispatch();
   const {notes, loading, error} = useSelector(state => state.notes);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      dispatch(fetchNotes());
-    }, [dispatch]),
-  );
+  useEffect(() => {
+    dispatch(fetchNotes());
+  }, [dispatch]);
+
+  const onRefresh = () => {
+    dispatch(fetchNotes());
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -77,6 +81,9 @@ function NotesListComponent({navigation}) {
         data={notes}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
       />
     </View>
   );
@@ -128,9 +135,15 @@ function NotesTabs({navigation}) {
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen
-          name="Mobile Dev Task"
+          name="MobileDevTask"
           component={Notes}
           options={{
+            tabBarIcon: ({color, focused, size}) => (
+              <Image
+                source={require('../images/list.png')}
+                style={{tintColor: color}}
+              />
+            ),
             headerRight: () => (
               <Button
                 onPress={() => {
@@ -152,7 +165,18 @@ function NotesTabs({navigation}) {
             ),
           }}
         />
-        <Tab.Screen name="Map" component={Map} />
+        <Tab.Screen
+          name="Map"
+          component={Map}
+          options={{
+            tabBarIcon: ({color, focused, size}) => (
+              <Image
+                source={require('../images/map.png')}
+                style={{tintColor: color}}
+              />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );

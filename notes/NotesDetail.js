@@ -35,21 +35,18 @@ export default function NotesDetail({route, navigation}) {
           const data = documentSnapshot.data();
           if (data) {
             dispatch(
-              setNote({
-                title: data.title,
-                body: data.body,
-                date: data.date,
-              }),
+              setNote({...note, ...data, location: data.location || null}),
             );
           }
         });
       return () => unsubscribe();
     } else {
       dispatch(
-        setNote(prevNote => ({
-          ...prevNote,
+        setNote({
+          ...note,
           date: new Date().toLocaleDateString(),
-        })),
+          location: null,
+        }),
       );
     }
   }, [dispatch, noteId]);
@@ -88,13 +85,7 @@ export default function NotesDetail({route, navigation}) {
   const getLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        setNote(prevNote => ({
-          ...prevNote,
-          location: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
-        }));
+        dispatch(setNote({...note, location: position.coords}));
       },
       error => {
         console.log(error);

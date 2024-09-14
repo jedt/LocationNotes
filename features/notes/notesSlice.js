@@ -71,7 +71,7 @@ const notesSlice = createSlice({
     note: {
       title: '',
       body: '',
-      date: '',
+      date: new Date().toLocaleDateString(),
       location: null,
     },
   },
@@ -80,7 +80,6 @@ const notesSlice = createSlice({
       state.currentScreen = action.payload;
     },
     setNote(state, action) {
-      console.log('setNote', action.payload);
       state.note = action.payload;
     },
   },
