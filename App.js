@@ -5,14 +5,10 @@
  * @format
  */
 
-import React, {useState, useEffect} from 'react';
-import auth from '@react-native-firebase/auth';
-import {Provider, useDispatch, useSelector, connect} from 'react-redux';
+import React from 'react';
+import {Provider} from 'react-redux';
 import store from './store';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {StyleSheet, Text, View, Button} from 'react-native';
 import Dashboard from './users/Dashboard.js';
-const Stack = createNativeStackNavigator();
 
 function App() {
   //create a new state currentView

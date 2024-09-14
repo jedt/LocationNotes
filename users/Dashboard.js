@@ -22,9 +22,6 @@ import {
 } from 'react-native';
 
 import NotesTabs from '../notes/NotesTabs';
-// import NotesView from '../notes/NotesView';
-// import NotesDetail from '../notes/NotesDetail';
-// import NotesMap from '../notes/NotesMap';
 
 export default function Dashboard() {
   const loggedInUser = useSelector(state => state.app.loggedInUser);
