@@ -31,6 +31,25 @@ for auth and backend storage. I have experience with firebase
 
 ## Native stack navigation
 Fast and smooth animations when transitioning
-    
-    
 
+## Apple Maps
+Apple maps is the default map in iOS and it is more optimized for iOS devices
+    
+## Features
+- ✅ User Login
+- ✅ User Sign Up
+- ✅ Main Screen
+  - ✅ Log Out Option
+  - ✅ Welcome Screen
+  - ✅ Notes View
+    - ✅ List View
+    - ✅ Map View
+- ✅ Add/Edit Note
+  - ✅ Change Date/Title/Body
+  - ✅ User Location is saved with the note
+- ✅ Delete Note
+- ✅ Bottom Tab Navigation Items: (List, Map)
+- ✅ Login user is saved in local storage and is auto logged in
+
+- Todo:
+  - Camera and photo upload to firebase storage
