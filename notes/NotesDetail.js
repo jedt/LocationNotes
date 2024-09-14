@@ -7,22 +7,23 @@ import {
   Button,
   StyleSheet,
   Platform,
+  Image,
   PermissionsAndroid,
+  TouchableOpacity,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {addNote, updateNote, deleteNote} from '../features/notes/notesSlice';
+import {
+  addNote,
+  updateNote,
+  deleteNote,
+  setNote,
+} from '../features/notes/notesSlice';
 import firestore from '@react-native-firebase/firestore';
 import Geolocation from '@react-native-community/geolocation';
 
 export default function NotesDetail({route, navigation}) {
   const {noteId} = route.params || {};
-  const [note, setNote] = useState({
-    title: '',
-    body: '',
-    date: '',
-    location: null,
-  });
-
+  const {note} = useSelector(state => state.notes);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,21 +34,25 @@ export default function NotesDetail({route, navigation}) {
         .onSnapshot(documentSnapshot => {
           const data = documentSnapshot.data();
           if (data) {
-            setNote({
-              title: data.title,
-              body: data.body,
-              date: data.date,
-            });
+            dispatch(
+              setNote({
+                title: data.title,
+                body: data.body,
+                date: data.date,
+              }),
+            );
           }
         });
       return () => unsubscribe();
     } else {
-      setNote(prevNote => ({
-        ...prevNote,
-        date: new Date().toLocaleDateString(),
-      }));
+      dispatch(
+        setNote(prevNote => ({
+          ...prevNote,
+          date: new Date().toLocaleDateString(),
+        })),
+      );
     }
-  }, [noteId]);
+  }, [dispatch, noteId]);
 
   useEffect(() => {
     requestLocationPermission();
@@ -99,42 +104,46 @@ export default function NotesDetail({route, navigation}) {
   };
 
   const handleSave = async () => {
-    try {
-      if (noteId) {
-        dispatch(updateNote({id: noteId, noteData: note}));
-      } else {
-        dispatch(addNote({noteData: note}));
-      }
-      navigation.goBack();
-    } catch (error) {
-      console.error('Error saving note:', error);
+    if (noteId) {
+      dispatch(updateNote({id: noteId, noteData: note}));
+    } else {
+      dispatch(addNote({noteData: note}));
     }
+    navigation.goBack();
   };
 
   const handleDelete = async () => {
-    try {
-      const returnObj = dispatch(deleteNote({id: noteId}));
-      console.log('returnObj', returnObj);
-      navigation.goBack();
-    } catch (error) {
-      console.error('Error deleting note:', error);
-    }
+    dispatch(deleteNote({id: noteId}));
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <Text>Date: {note.date}</Text>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.push('NotesDetailChangeDate', {noteId, note})
+        }>
+        <View style={styles.buttonWrapper}>
+          <View style={styles.textWrapper}>
+            <Text>Date: {note.date}</Text>
+          </View>
+          <Image
+            resizeMode="contain"
+            source={require('../images/right_arrow.png')}
+          />
+        </View>
+      </TouchableOpacity>
       <TextInput
         style={styles.input}
         placeholder="Title"
         value={note.title}
-        onChangeText={text => setNote(prevNote => ({...prevNote, title: text}))}
+        onChangeText={text => dispatch(setNote({...note, title: text}))}
       />
       <TextInput
         style={[styles.input, {height: 100}]}
         placeholder="Body"
         value={note.body}
-        onChangeText={text => setNote(prevNote => ({...prevNote, body: text}))}
+        onChangeText={text => dispatch(setNote({...note, body: text}))}
         multiline
       />
       <Button title="Save" onPress={handleSave} />
@@ -150,9 +159,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   input: {
+    height: 44,
+    paddingHorizontal: 10,
     marginVertical: 10,
-    padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#EAEAEA',
+  },
+
+  buttonWrapper: {
+    paddingHorizontal: 10,
+    height: 44,
+    borderWidth: 1,
+    flexDirection: 'row',
+    borderColor: '#EAEAEA',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+  },
+
+  textWrapper: {
+    flex: 1,
   },
 });

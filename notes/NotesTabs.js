@@ -17,7 +17,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {logout} from '../features/apps/appSlice';
 import NotesMap from './NotesMap';
 import NotesDetail from './NotesDetail';
-
+import NotesDetailChangeDate from './NotesDetailChangeDate';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -93,6 +93,10 @@ function Notes() {
       />
 
       <Stack.Screen name="NotesDetail" component={NotesDetail} />
+      <Stack.Screen
+        name="NotesDetailChangeDate"
+        component={NotesDetailChangeDate}
+      />
     </Stack.Navigator>
   );
 }
@@ -108,6 +112,10 @@ function Map() {
       />
 
       <Stack.Screen name="NotesDetail" component={NotesDetail} />
+      <Stack.Screen
+        name="NotesDetailChangeDate"
+        component={NotesDetailChangeDate}
+      />
     </Stack.Navigator>
   );
 }

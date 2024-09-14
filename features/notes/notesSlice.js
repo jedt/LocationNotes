@@ -68,10 +68,20 @@ const notesSlice = createSlice({
     notes: [],
     loading: false,
     error: null,
+    note: {
+      title: '',
+      body: '',
+      date: '',
+      location: null,
+    },
   },
   reducers: {
     setScreen(state, action) {
       state.currentScreen = action.payload;
+    },
+    setNote(state, action) {
+      console.log('setNote', action.payload);
+      state.note = action.payload;
     },
   },
   extraReducers: builder => {
@@ -117,5 +127,5 @@ const notesSlice = createSlice({
   },
 });
 
-export const {setScreen} = notesSlice.actions;
+export const {setScreen, setNote} = notesSlice.actions;
 export default notesSlice.reducer;
