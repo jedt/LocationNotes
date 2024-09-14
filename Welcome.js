@@ -9,7 +9,7 @@ export default function Welcome({navigation}) {
   };
   return (
     <View style={styles.container}>
-      <Text>Welcome</Text>
+      <Text style={{fontSize: 32}}>Welcome to Mobile Dev Task</Text>
       <Button title={'Continue'} onPress={onPressContinue} />
     </View>
   );
