@@ -75,12 +75,14 @@ function NotesListComponent({navigation}) {
     );
   }
 
+  console.log('notes', notes);
+
   return (
     <View style={styles.container}>
       <FlatList
         data={notes}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item && item.id}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }

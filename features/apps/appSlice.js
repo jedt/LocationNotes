@@ -138,6 +138,10 @@ const appSlice = createSlice({
         state.loggedInUser = action.payload;
         state.status = 'succeeded';
       })
+      .addCase(readUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
       .addCase(logout.pending, state => {
         state.status = 'loading';
         state.error = null;

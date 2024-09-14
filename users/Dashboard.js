@@ -38,7 +38,6 @@ export default function Dashboard() {
   //readUser
   useEffect(() => {
     try {
-      console.log('[Dashboard] readUser');
       dispatch(readUser());
     } catch (err) {
       Alert.alert('Error', err);

@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-
+const notesCollection = firestore().collection('notes');
 export const fetchNotes = createAsyncThunk(
   'notes/fetchNotes',
   async (_, thunkAPI) => {
@@ -9,7 +9,7 @@ export const fetchNotes = createAsyncThunk(
       console.log(`[${Date()} notesSlice] fetchNotes`);
       const notes = [];
       const startTime = Date.now();
-      const querySnapshot = await firestore().collection('notes').get();
+      const querySnapshot = await notesCollection.get();
       console.log(
         `[${Date()} notesSlice] fetchNotes took`,
         Date.now() - startTime,
@@ -29,7 +29,8 @@ export const addNote = createAsyncThunk(
   'notes/addNote',
   async ({noteData}, thunkAPI) => {
     try {
-      return await firestore().collection('notes').add(noteData);
+      const documentReference = await notesCollection.add(noteData);
+      return {id: documentReference.id, ...noteData};
     } catch (error) {
       console.log('addNote error', error);
       return thunkAPI.rejectWithValue(error.message);
@@ -41,7 +42,8 @@ export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({id, noteData}, thunkAPI) => {
     try {
-      return await firestore().collection('notes').doc(id).update(noteData);
+      await notesCollection.doc(id).update(noteData);
+      return {id, ...noteData};
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -52,7 +54,7 @@ export const deleteNote = createAsyncThunk(
   'notes/deleteNote',
   async ({id}, thunkAPI) => {
     try {
-      const returnObj = await firestore().collection('notes').doc(id).delete();
+      await notesCollection.doc(id).delete();
       return id;
     } catch (error) {
       console.log('deleteNote error', error);
@@ -120,6 +122,7 @@ const notesSlice = createSlice({
         state.loading = true;
       })
       .addCase(deleteNote.fulfilled, (state, action) => {
+        console.log('deleteNote.fulfilled', action.payload);
         state.loading = false;
         state.notes = state.notes.filter(note => note.id !== action.payload);
       });

@@ -43,7 +43,8 @@ export default function NotesDetail({route, navigation}) {
     } else {
       dispatch(
         setNote({
-          ...note,
+          title: '',
+          body: '',
           date: new Date().toLocaleDateString(),
           location: null,
         }),
@@ -94,7 +95,7 @@ export default function NotesDetail({route, navigation}) {
     );
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (noteId) {
       dispatch(updateNote({id: noteId, noteData: note}));
     } else {
@@ -103,7 +104,7 @@ export default function NotesDetail({route, navigation}) {
     navigation.goBack();
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     dispatch(deleteNote({id: noteId}));
     navigation.goBack();
   };
