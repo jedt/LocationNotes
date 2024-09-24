@@ -1,7 +1,9 @@
-# Apple Location Notes
+# Location Notes 
+
+<img height="800" src="screenshot/image.png?raw=true" />
 
 ## Notes 
-- This was developed using Apple iOS, not yet tested in Android.
+- This was developed using Apple iOS and has not yet been tested in Android.
 
 ## Requirements 
 - `node v22.4.1`
